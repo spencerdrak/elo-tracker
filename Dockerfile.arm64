@@ -1,0 +1,17 @@
+FROM golang:1.16-alpine AS builder
+
+WORKDIR /app
+
+COPY ./ ./
+
+RUN go mod download
+
+RUN CGO_ENABLED=0 CC=aarch64-linux-gnu-gcc GOOS=linux GOARCH=arm64 go build -o ./elo-tracker
+
+EXPOSE 8000
+
+FROM scratch AS runner
+
+COPY --from=builder /app/elo-tracker /app/elo-tracker
+
+ENTRYPOINT [ "/app/elo-tracker" ]
