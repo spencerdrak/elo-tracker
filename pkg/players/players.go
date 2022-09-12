@@ -17,7 +17,7 @@ type Player struct {
 func (p Player) InsertInto(db *sql.DB) *util.EloTrackerError {
 	insert, err := db.Prepare("INSERT INTO players (username, rating) " +
 		"VALUES" +
-		"(?, ?)")
+		"($1, $2);")
 	if err != nil {
 		return &util.EloTrackerError{
 			Inner:             err,
@@ -54,7 +54,7 @@ func GetAllPlayers(db *sql.DB) ([]Player, *util.EloTrackerError) {
 		}
 	}
 
-	var output []Player
+	var output = []Player{}
 	for rows.Next() {
 		var player = Player{}
 		err := rows.Scan(&player.Id, &player.Username, &player.Rating)
@@ -74,7 +74,7 @@ func GetAllPlayers(db *sql.DB) ([]Player, *util.EloTrackerError) {
 }
 
 func GetPlayerByUsername(db *sql.DB, username string) (Player, *util.EloTrackerError) {
-	row := db.QueryRow("SELECT id, username, rating FROM players WHERE username = ?;", username)
+	row := db.QueryRow("SELECT id, username, rating FROM players WHERE username = $1;", username)
 
 	player := Player{}
 
@@ -100,7 +100,7 @@ func GetPlayerByUsername(db *sql.DB, username string) (Player, *util.EloTrackerE
 }
 
 func (p Player) UpdateRating(newRating int, db *sql.DB) *util.EloTrackerError {
-	update, err := db.Prepare("UPDATE players SET rating = ? WHERE id = ?")
+	update, err := db.Prepare("UPDATE players SET rating = $1 WHERE id = $2")
 	if err != nil {
 		return &util.EloTrackerError{
 			Inner:             err,

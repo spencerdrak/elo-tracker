@@ -52,7 +52,7 @@ func (g Game) AddTo(db *sql.DB) ([]players.Player, *util.EloTrackerError) {
 
 	insert, prepareErr := db.Prepare("INSERT INTO games (winner_username, loser_username, win_method) " +
 		"VALUES" +
-		"(?, ?, ?)")
+		"($1, $2, $3)")
 	if prepareErr != nil {
 		return nil, &util.EloTrackerError{
 			Inner:             err,
