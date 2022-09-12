@@ -8,12 +8,12 @@ image:
   repository: docker.io/elo-tracker/arm64
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.1.0"
+  tag: "2.0.0"
 
 eloTracker:
   databaseUrlSecret:
-    name: mysql-db-url
-    key: mysqlURL
+    name: db-url
+    key: postgresURL
 
 imagePullSecrets: []
 nameOverride: ""

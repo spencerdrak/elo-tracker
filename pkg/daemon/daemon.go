@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 	"github.com/spencerdrak/elotracker/pkg/handlers"
 	"github.com/spencerdrak/elotracker/pkg/util"
 
@@ -15,11 +15,11 @@ import (
 
 func Run() {
 	logger := log.WithFields(log.Fields{
-		"app": "liveatc-archive-downloader",
+		"app": "elo-tracker",
 	})
 
-	// urlExample := "postgres://username:password@localhost:5432/database_name"
-	db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
+	// "host=%s port=%s dbname=%s user=%s password=%s sslmode=require"
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		logger.Fatal("Unable to connect to database: %v\n", err)
 	}
@@ -28,6 +28,8 @@ func Run() {
 	if err != nil {
 		logger.Fatal("Unable to ping DB: %v\n", err)
 	}
+
+	logger.Println("Successfully connected to DB")
 
 	defer db.Close()
 
